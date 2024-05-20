@@ -158,7 +158,7 @@ void DrawHouse() {
     DrawAllHouseFaces();
     DrawAllWindows();
     DrawDoor(DoorVertices[0], DoorVertices[1], DoorVertices[2], DoorVertices[3]);
-    DrawAllCircles();
+    //DrawAllCircles();
     glutSwapBuffers();
 }
 
