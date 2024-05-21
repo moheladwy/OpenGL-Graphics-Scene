@@ -1,6 +1,20 @@
 #pragma once
 #include "Draw-House.h"
 
+/*
+* ===================
+    Global Variables
+* ===================
+*/
+double leftWindowsRotationAngle  = 0.0;
+double rightWindowsRotationAngle = 0.0;
+double doorRotationAngle         = 0.0;
+
+/*
+* ====================
+    General Functions
+* ====================
+*/
 void setColor(int r, int g, int b) {
     // Function to convert RGB values to the range 0.0-1.0
     glColor3f(r / 255.0f, g / 255.0f, b / 255.0f);
@@ -20,9 +34,15 @@ void MyInit() {
     glLoadIdentity();
     // Set the projection matrix to orthographic projection
     gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+    //glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glEnable(GL_DEPTH_TEST);
 }
 
+/*
+* ================
+    Drawing Roof
+* ================
+*/
 void DrawRoof(const GLfloat* v1, const GLfloat* v2, const GLfloat* v3) {
     setColor(RED); // Set the drawing color to red
     // Begin drawing the triangle
@@ -68,104 +88,221 @@ void DrawAllHouseFaces() {
              HouseVertices[7], BLUE);
     // 3- Draw the Left Face of the House
     DrawFace(HouseVertices[0], HouseVertices[3], HouseVertices[7], 
-             HouseVertices[4], GREEN);
+             HouseVertices[4], BLACK);
     // 4- Draw the Right Face of the House
     DrawFace(HouseVertices[1], HouseVertices[2], HouseVertices[6], 
-             HouseVertices[5], GREEN);
+             HouseVertices[5], BLACK);
     // 5- Draw the Bottom Face of the House
     DrawFace(HouseVertices[3], HouseVertices[2], HouseVertices[6], 
              HouseVertices[7], RED);
 }
 
-void DrawWindow(const GLfloat &x, const GLfloat &y, const GLfloat &z) {
+/*
+* ==================
+    Drawing Windows
+* ==================
+*/
+void DrawWindow(const GLfloat* w) {
     setColor(YELLO); // Set the drawing color to yellow
     // Begin drawing the polygon
     glBegin(GL_QUADS);
-        glVertex3f(x - 0.1f, y + 0.1f, z); // First vertex
-        glVertex3f(x + 0.1f, y + 0.1f, z); // Second vertex
-        glVertex3f(x + 0.1f, y - 0.1f, z); // Third vertex
-        glVertex3f(x - 0.1f, y - 0.1f, z); // Fourth vertex
+        glVertex3f(w[0] - 0.1f, w[1] + 0.1f, w[2]); // First vertex
+        glVertex3f(w[0] + 0.1f, w[1] + 0.1f, w[2]); // Second vertex
+        glVertex3f(w[0] + 0.1f, w[1] - 0.1f, w[2]); // Third vertex
+        glVertex3f(w[0] - 0.1f, w[1] - 0.1f, w[2]); // Fourth vertex
     glEnd();
 }
 
-void DrawAllWindows() {
-    DrawWindow(-0.25f, 0.25f, 0.01f);
-    DrawWindow( 0.25f, 0.25f, 0.01f);
-    DrawWindow(-0.25f,-0.05f, 0.01f);
-    DrawWindow( 0.25f,-0.05f, 0.01f);
+void DrawLeftWindows() {
+    glPushMatrix();
+
+    glTranslated(-0.35, 0.0, 0.0);
+    glRotated(-1 * leftWindowsRotationAngle, 0, 1, 0);
+    glTranslated( 0.35, 0.0, 0.0);
+
+    DrawWindow(WindowsLocations[0]);  // W1
+    DrawWindow(WindowsLocations[1]);  // W2
+    
+    glPopMatrix();
 }
 
-void DrawDoor(const GLfloat* v1, const GLfloat* v2, const GLfloat* v3, const GLfloat* v4) {
-    setColor(GREEN); // Set the drawing color to green
-    // Begin drawing the polygon
-    glBegin(GL_QUADS);
-        glVertex3fv(v1); // First vertex
-        glVertex3fv(v2); // Second vertex
-        glVertex3fv(v3); // Third vertex
-        glVertex3fv(v4); // Fourth vertex
-    glEnd();
+void DrawRightWindows() {
+    glPushMatrix();
+    
+    glTranslated( 0.35, 0.0, 0.0);
+    glRotated(-1 * rightWindowsRotationAngle, 0, 1, 0);
+    glTranslated(-0.35, 0.0, 0.0);
+
+    DrawWindow(WindowsLocations[2]);  // W3
+    DrawWindow(WindowsLocations[3]);  // W4
+    
+    glPopMatrix();
 }
 
-void DrawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides) {
-    GLint numberOfVertices = numberOfSides + 2; // Number of vertices for the circle
-    GLfloat doublePi = 2.0f * 3.14159265358979323846f; // 2 * PI
-
-    // Vertices array for the circle
-    GLfloat* circleVerticesX;
-    GLfloat* circleVerticesY;
-    GLfloat* circleVerticesZ;
-
-    circleVerticesX = new GLfloat[numberOfVertices];
-    circleVerticesY = new GLfloat[numberOfVertices];
-    circleVerticesZ = new GLfloat[numberOfVertices];
-
-    // Center vertex for the triangle fan
-    circleVerticesX[0] = x;
-    circleVerticesY[0] = y;
-    circleVerticesZ[0] = z;
-
-    for (int i = 1; i < numberOfVertices; i++) {
-        circleVerticesX[i] = x + (radius * cos(i * doublePi / numberOfSides));
-        circleVerticesY[i] = y + (radius * sin(i * doublePi / numberOfSides));
-        circleVerticesZ[i] = z;
+void OpenWindows() {
+    if (leftWindowsRotationAngle < 89.0)
+    {
+        leftWindowsRotationAngle += SPEED_RATE;
+        glutPostRedisplay();
     }
-
-    // Draw the circle using triangle fan
-    glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < numberOfVertices; i++) {
-        glVertex3f(circleVerticesX[i], circleVerticesY[i], circleVerticesZ[i]);
+    if (rightWindowsRotationAngle > -89.0)
+    {
+        rightWindowsRotationAngle -= SPEED_RATE;
+        glutPostRedisplay();
     }
-    glEnd();
-
-    delete[] circleVerticesX;
-    delete[] circleVerticesY;
-    delete[] circleVerticesZ;
 }
 
-void DrawAllCircles() {
-    setColor(WHITE); // Set the drawing color to white
-    DrawCircle(-0.25f, -0.5f, 0.01f, 0.05f, 100);
+void CloseWindows() {
+    if (leftWindowsRotationAngle > 0) {
+        leftWindowsRotationAngle -= SPEED_RATE;
+        glutPostRedisplay();
+    }
+    if (rightWindowsRotationAngle < 0) {
+        rightWindowsRotationAngle += SPEED_RATE;
+        glutPostRedisplay();
+    }
+}
+
+/*
+* ===============
+    Drawing Door
+* ===============
+*/
+void DrawDoor() {
+    glPushMatrix();
+
+    glTranslated(-0.1, 0.0, 0.0);
+    glRotated(doorRotationAngle, 0, -1, 0);
+    glTranslated(0.1, 0.0, 0.0);
+
+    DrawFace(DoorVertices[0], DoorVertices[1], DoorVertices[2], DoorVertices[3], ORANGE);
+    
+    glPopMatrix();
+}
+
+void OpenDoor() {
+    if (doorRotationAngle < 89.0) {
+        doorRotationAngle += SPEED_RATE;
+        glutPostRedisplay();
+    }
+}
+
+void CloseDoor() {
+    if (doorRotationAngle > 0) {
+        doorRotationAngle -= SPEED_RATE;
+        glutPostRedisplay();
+    }
 }
 
 void DrawHouse() {
-    // 1.0- Draw the Roof.
-    // 1.1- Draw the Front Face of the House.
-    // 1.2- Draw the Windows.
-    // 1.3- Draw the Door.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glRotated(0.1, 1, 1, 0);
+    //glLoadIdentity();
+    //glRotated(-30, 1, 0, 0);
+    //glRotated(20, 0, 1, 0);
+
     DrawAllRoofFaces();
     DrawAllHouseFaces();
-    DrawAllWindows();
-    DrawDoor(DoorVertices[0], DoorVertices[1], DoorVertices[2], DoorVertices[3]);
-    //DrawAllCircles();
+    DrawLeftWindows();
+    DrawRightWindows();
+    DrawDoor();
+    
     glutSwapBuffers();
+}
+
+/*
+* ====================
+    Bicycle Functions
+* ====================
+*/
+void MoveBicycleForward() {
+
+}
+
+void MoveBicycleBackward() {
+
+}
+
+void MoveBicycleRight() {
+
+}
+
+void MoveBicycleLeft() {
+
+}
+
+/*
+* =====================
+    Keyboard Functions
+* =====================
+*/
+void LetterKeys(unsigned char key, int x, int y) {
+    switch (key) {
+        case 27:
+            exit(0);
+            break;
+        case 'o': // Open the door
+            OpenDoor();
+            break;
+        case 'c': // Close the door
+            CloseDoor();
+            break;
+        case 'O': // Open the windows
+            OpenWindows();
+            break;
+        case 'C': // Close the windows
+            CloseWindows();
+            break;
+        case 'f': // Go forward
+            MoveBicycleForward();
+            break;
+        case 'b': // Go backward
+            MoveBicycleBackward();
+            break;
+        case 'r': // Go right
+            MoveBicycleRight();
+            break;
+        case 'l': // Go left
+            MoveBicycleLeft();
+            break;
+        default:
+            break;
+    }
+    glutPostRedisplay();
+}
+
+void SpecialKeys(int key, int x, int y) {
+    switch (key) {
+        case GLUT_KEY_UP:
+            glMatrixMode(GL_MODELVIEW);
+            glRotatef(2.0, 1.0, 0.0, 0.0);
+            break;
+        case GLUT_KEY_DOWN:
+            glMatrixMode(GL_MODELVIEW);
+            glRotatef(-2.0, 1.0, 0.0, 0.0);
+            break;
+        case GLUT_KEY_LEFT:
+            glMatrixMode(GL_MODELVIEW);
+            glRotatef(2.0, 0.0, 1.0, 0.0);
+            break;
+        case GLUT_KEY_RIGHT:
+            glMatrixMode(GL_MODELVIEW);
+            glRotatef(-2.0, 0.0, 1.0, 0.0);
+            break;
+        default:
+            break;
+    }
+    glutPostRedisplay();
 }
 
 void Spin() {
     glutPostRedisplay();
 }
 
+/*
+* ================
+    Main Function
+* ================
+*/
 int main(int c, char* v[]) {
     glutInit(&c, v);
     glutInitWindowPosition(W_POS_X, W_POS_Y); // Set the window position
@@ -173,8 +310,10 @@ int main(int c, char* v[]) {
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("Draw House");
     MyInit();
+    glutKeyboardFunc(LetterKeys);
+    glutSpecialFunc(SpecialKeys);
     glutDisplayFunc(DrawHouse);
-    //glutIdleFunc(Spin);
+    glutIdleFunc(Spin);
     glutMainLoop();
     return 0;
 }
