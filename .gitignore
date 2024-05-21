@@ -4,7 +4,7 @@
 # Visual Studio 2022 project files
 .vs/
 x64/
-
+packages/
 # Compiled Object files
 *.slo
 *.lo
