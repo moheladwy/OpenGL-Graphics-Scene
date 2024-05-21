@@ -133,6 +133,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Draw-Bicycle-v2.cpp" />
+    <ClCompile Include="Draw-Bicycle.cpp" />
     <ClCompile Include="Draw-House.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
