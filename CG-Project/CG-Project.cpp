@@ -14,10 +14,9 @@ double bicycleRotationAngle      = 0.0;
 double wheelRotationAngle        = 0.0;
 bool   animationActivation       = false;
 
-double rotationAngle = 0;
-double rotateX       = 0;
-double rotateY       = 0;
-double rotateZ       = 0;
+double rotationAngleX = -30;
+double rotationAngleY = 120;
+double rotationAngleZ = 0;
 double scaleX        = 1;
 double scaleY        = 1;
 double scaleZ        = 1;
@@ -45,7 +44,6 @@ void MyInit()
     // Set the viewport to cover the entire window
     glViewport(W_POS_X, W_POS_Y, W_WIDTH, W_HEIGHT);
     // Set the projection matrix to the identity matrix
-    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     // Set the projection matrix to orthographic projection
     gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
@@ -71,19 +69,17 @@ void DrawScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     SceneTransformation();
-    scaleX = 1.0;
-    scaleY = 1.0;
-    scaleZ = 1.0;
-    rotationAngle = 0.0;
-    rotateX = 0.0;
-    rotateY = 0.0;
-    rotateZ = 0.0;
 
     // Draw the house components
     DrawAllRoofFaces();
     DrawAllHouseFaces();
+
+
     DrawLeftWindows();
+
     DrawRightWindows();
+
+
     DrawDoor();
 
     // Draw the street and the bicycle
@@ -95,80 +91,48 @@ void DrawScene()
 
 void SceneTransformation()
 {
-    glRotatef(rotationAngle, rotateX, rotateY, rotateZ);
+    glLoadIdentity();
+
+    glRotatef(rotationAngleX, 1, 0, 0);
+    glRotatef(rotationAngleY, 0, 1, 0);
+    glRotatef(rotationAngleZ, 0, 0, 1);
     glScaled(scaleX, scaleY, scaleZ);
 
 }
 
 void SceneZoomIn()
 {
-    glMatrixMode(GL_PROJECTION);
-    scaleX = 0.9;
-    scaleY = 0.9;
-    scaleZ = 0.9;
-    rotationAngle = 0.0;
-    rotateX = 0.0;
-    rotateY = 0.0;
-    rotateZ = 0.0;
+    scaleX += 0.1;
+    scaleY += 0.1;
+    scaleZ += 0.1;
 }
 
 void SceneZoomOut()
 {
-    glMatrixMode(GL_PROJECTION);
-    scaleX = 1.1;
-    scaleY = 1.1;
-    scaleZ = 1.1;
-    rotationAngle = 0.0;
-    rotateX = 0.0;
-    rotateY = 0.0;
-    rotateZ = 0.0;
+    scaleX -= 0.1;
+    scaleY -= 0.1;
+    scaleZ -= 0.1;
 }
 
 void SceneRotateLeft()
 {
-    glMatrixMode(GL_MODELVIEW);
-    rotationAngle = 2.0;
-    rotateX = 0.0;
-    rotateY = 1.0;
-    rotateZ = 0.0;
+    rotationAngleY += 2.0;
 }
 
 void SceneRotateRight()
 {
-    glMatrixMode(GL_MODELVIEW);
-    rotationAngle = -2.0;
-    rotateX = 0.0;
-    rotateY = 1.0;
-    rotateZ = 0.0;
+    rotationAngleY -= 2.0;
 }
 
 void SceneRotateUp()
 {
-    glMatrixMode(GL_MODELVIEW);
-    rotationAngle = 2.0;
-    rotateX = 1.0;
-    rotateY = 0.0;
-    rotateZ = 0.0;
+    rotationAngleX += 2.0;
+    
 }
 
 void SceneRotateDown()
 {
-    glMatrixMode(GL_MODELVIEW);
-    rotationAngle = -2.0;
-    rotateX = 1.0;
-    rotateY = 0.0;
-    rotateZ = 0.0;
-}
-
-void ResetScene() {
-    glMatrixMode(GL_MODELVIEW);
-    scaleX = 1.0;
-    scaleY = 1.0;
-    scaleZ = 1.0;
-    rotationAngle = 0.0;
-    rotateX = 0.0;
-    rotateY = 0.0;
-    rotateZ = 0.0;
+    rotationAngleX -= 2.0;
 }
 
 /*
@@ -258,7 +222,6 @@ void DrawLeftWindows()
     DrawWindow(BackWindowsLocations[1], GRAY); // W2
 
     // Draw the front windows.
-    glPushMatrix();
 
     glTranslated(-0.35, 0.0, 0.0);
     glRotated(-1 * leftWindowsRotationAngle, 0, 1, 0);
@@ -267,7 +230,10 @@ void DrawLeftWindows()
     DrawWindow(FrontWindowsLocations[0], YELLO); // W1
     DrawWindow(FrontWindowsLocations[1], YELLO); // W2
 
-    glPopMatrix();
+    glTranslated(-0.35, 0.0, 0.0);
+    glRotated(1 * leftWindowsRotationAngle, 0, 1, 0);
+    glTranslated(0.35, 0.0, 0.0);
+
 }
 
 void DrawRightWindows()
@@ -277,7 +243,6 @@ void DrawRightWindows()
     DrawWindow(BackWindowsLocations[3], GRAY); // W4
 
     // Draw the front windows.
-    glPushMatrix();
 
     glTranslated(0.35, 0.0, 0.0);
     glRotated(-1 * rightWindowsRotationAngle, 0, 1, 0);
@@ -286,7 +251,9 @@ void DrawRightWindows()
     DrawWindow(FrontWindowsLocations[2], YELLO); // W3
     DrawWindow(FrontWindowsLocations[3], YELLO); // W4
 
-    glPopMatrix();
+    glTranslated(0.35, 0.0, 0.0);
+    glRotated(1 * rightWindowsRotationAngle, 0, 1, 0);
+    glTranslated(-0.35, 0.0, 0.0);
 }
 
 void OpenWindows()
@@ -326,7 +293,6 @@ void DrawDoor()
 {
     DrawFace(BackDoorVertices[0], BackDoorVertices[1], BackDoorVertices[2], BackDoorVertices[3], GRAY);
 
-    glPushMatrix();
 
     glTranslated(-0.1, 0.0, 0.0);
     glRotated(doorRotationAngle, 0, -1, 0);
@@ -334,7 +300,11 @@ void DrawDoor()
 
     DrawFace(FrontDoorVertices[0], FrontDoorVertices[1], FrontDoorVertices[2], FrontDoorVertices[3], ORANGE);
 
-    glPopMatrix();
+    glTranslated(-0.1, 0.0, 0.0);
+    glRotated(-doorRotationAngle, 0, -1, 0);
+    glTranslated(0.1, 0.0, 0.0);
+
+
 }
 
 void OpenDoor()
@@ -449,21 +419,18 @@ void DrawBicycleHandle()
 }
 
 void DrawBicycleWheels() {
-    // Draw front wheel with proper transformations
-    glPushMatrix();
-    glTranslated(0.2, -0.65, 0.875); // Translate to the wheel's position
-    glRotated(wheelRotationAngle, 0, -1, 0); // Rotate the wheel around its own axis
-    DrawWheel(0, 0, 0, 0.1); // Draw the wheel at the origin
-    glTranslated(-0.2, 0.65, -0.875); // Translate to the wheel's position
-    glPopMatrix();
 
     // Draw back wheel with proper transformations
     DrawWheel(-0.2, -0.65, 0.875, 0.1); // Draw the wheel.
+
+    // Draw front wheel with proper transformations
+    glTranslated(0.2, -0.65, 0.875); // Translate to the wheel's position
+    glRotated(wheelRotationAngle, 0, -1, 0); // Rotate the wheel around its own axis
+    DrawWheel(0, 0, 0, 0.1); // Draw the wheel at the origin
 }
 
 void DrawBicycle()
 {
-    glPushMatrix();
     glRotated(bicycleRotationAngle, 0, -1, 0); // Rotate the entire bicycle
     glTranslated(bicycleMovingFactor, 0.0, 0.0); // Move the entire bicycle
 
@@ -471,9 +438,9 @@ void DrawBicycle()
     DrawBicycleBody();
     DrawBicycleHandleNeck();
     DrawBicycleHandle();
-    DrawBicycleWheels();
 
-    glPopMatrix();
+
+    DrawBicycleWheels();
 }
 
 void MoveBicycleForward()
@@ -559,9 +526,6 @@ void LetterKeys(unsigned char key, int x, int y)
         break;
     case 'z': // Zoom in
         SceneZoomIn();
-        break;
-    case 'R': // Reset the scene
-        ResetScene();
         break;
     default:
         break;

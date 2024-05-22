@@ -35,6 +35,9 @@
 #define SPEED_RATE               3
 #define PI                       3.14159f
 #define MAX_WHEEL_ROTATION_ANGLE 45
+#define X_AXIS                   0
+#define Y_AXIS                   1
+#define Z_AXIS                   2
 
 // Define the Roof vertices.
 const GLfloat RoofVertices[6][3] = {
