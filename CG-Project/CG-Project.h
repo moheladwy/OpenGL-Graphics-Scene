@@ -29,6 +29,7 @@
 #define W_HEIGHT 600
 #define W_POS_X  0
 #define W_POS_Y  0
+#define SPEED_RATE  3
 
 // Define the Scene properties.
 #define SPEED_RATE               3

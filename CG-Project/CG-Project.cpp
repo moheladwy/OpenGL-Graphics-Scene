@@ -1,5 +1,5 @@
 #pragma once
-#include "Draw-House.h"
+#include "CG-Project.h"
 
 /*
 * ===================
@@ -49,6 +49,7 @@ void MyInit()
     glLoadIdentity();
     // Set the projection matrix to orthographic projection
     gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+    //glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glEnable(GL_DEPTH_TEST);
 
     // Set the Keyboard and Mouse functions
