@@ -17,9 +17,9 @@ bool   animationActivation       = false;
 double rotationAngleX = -30;
 double rotationAngleY = 120;
 double rotationAngleZ = 0;
-double scaleX        = 1;
-double scaleY        = 1;
-double scaleZ        = 1;
+double scaleX        = 0.8;
+double scaleY        = 0.8;
+double scaleZ        = 0.8;
 
 /*
 * ====================
@@ -526,6 +526,14 @@ void LetterKeys(unsigned char key, int x, int y)
         break;
     case 'z': // Zoom in
         SceneZoomIn();
+        break;
+    case 'e':
+        rotationAngleX = -30;
+        rotationAngleY = 120;
+        rotationAngleZ = 0;
+        scaleX = 0.8;
+        scaleY = 0.8;
+        scaleZ = 0.8;
         break;
     default:
         break;
