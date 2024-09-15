@@ -1,4 +1,4 @@
-# OpenGL GraphicsScene
+# OpenGL Graphics Scene
 
 Welcome to the OpenGL GraphicsScene project! This repository showcases a comprehensive graphics scene implemented using OpenGL, demonstrating various advanced rendering techniques and concepts. Whether you're a student learning about graphics programming, a developer looking to understand OpenGL better, or an enthusiast eager to explore, this project offers a rich learning resource.
 
